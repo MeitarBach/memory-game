@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -126,7 +127,7 @@ namespace MemoryGame.UI
 
         private void gameCard_Click(object sender, EventArgs e)
         {
-            if(m_IsFirstClick)
+            if (m_IsFirstClick)
             {
                 m_FirstCellChosen = findChosenGameCell(sender as Button);
                 m_FirstChosenButton = sender as Button;
@@ -135,19 +136,37 @@ namespace MemoryGame.UI
             else
             {
                 m_SecondCellChosen = findChosenGameCell(sender as Button);
-                m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
-                m_FirstPlayerColor = m_CurrentPlayer == m_FirstPlayer ? m_FirstPlayerColor : m_SecondPlayerColor;
                 (sender as Button).Enabled = false;
+
+                m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
+                m_CurrentPlayerColor = m_CurrentPlayer == m_FirstPlayer ? m_FirstPlayerColor : m_SecondPlayerColor;
                 if (m_FirstCellChosen.Letter != m_SecondCellChosen.Letter)
                 {
                     coverButtons(sender as Button);
+                    currentPlayer.BackColor = m_CurrentPlayerColor;
                 }
 
                 updateButtonsText();
                 updateLabels();
+                if(m_GameManager.IsGameOver())
+                {
+                    MessageBox.Show(gameOverMessage());
+                }
             }
 
             m_IsFirstClick = !m_IsFirstClick;
+        }
+
+        private string gameOverMessage()
+        {
+            string winner = m_FirstPlayer.Score > m_SecondPlayer.Score ? m_FirstPlayer.Name : m_SecondPlayer.Name;
+
+            return string.Format(
+@"Final Score:
+{0}
+{1}
+Congratulations {2}!! You are the Winner!!
+Play another game?", firstPlayer.Text, secondPlayer.Text, winner);
         }
 
         private GameCell findChosenGameCell(Button i_SelectedCard)

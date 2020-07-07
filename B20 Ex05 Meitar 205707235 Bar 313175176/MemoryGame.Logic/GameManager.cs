@@ -17,6 +17,7 @@ namespace MemoryGame.Logic
 
         public Player ExecuteMove(Player i_CurrentPlayer, GameCell i_FirstCell, GameCell i_SecondCell)
         {
+            Thread.Sleep(2000);
             Player nextPlayer = i_CurrentPlayer;
 
             if (i_FirstCell.Letter == i_SecondCell.Letter)
@@ -29,8 +30,6 @@ namespace MemoryGame.Logic
                 coverCells(i_FirstCell, i_SecondCell);
                 nextPlayer = togglePlayer(i_CurrentPlayer);
             }
-
-            Thread.Sleep(2000);
 
             return nextPlayer;
         }
