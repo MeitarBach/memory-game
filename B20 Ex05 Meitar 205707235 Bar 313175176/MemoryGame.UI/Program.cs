@@ -15,6 +15,14 @@ namespace MemoryGame.UI
             settings.ShowDialog();
             FormMemoryGame memoryGame = new FormMemoryGame(settings);
             memoryGame.ShowDialog();
+
+            //    bool 
+            //    do
+            //    {
+            //        FormMemoryGame memoryGame = new FormMemoryGame(settings);
+            //        memoryGame.RunGame();
+            //    }
+            //    while();
         }
     }
 }

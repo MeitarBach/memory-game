@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MemoryGame.Logic;
 
 namespace MemoryGame.UI
 {
@@ -24,6 +25,11 @@ namespace MemoryGame.UI
         {
             int.TryParse(boardSizeButton.Text[0].ToString(), out o_Height);
             int.TryParse(boardSizeButton.Text[2].ToString(), out o_Width);
+        }
+
+        public bool IsOponnentHuman()
+        {
+            return secondPlayerTextBox.Enabled;
         }
 
         public string FirstPlayerName

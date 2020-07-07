@@ -43,6 +43,7 @@ namespace MemoryGame.Logic
         private Player togglePlayer(Player i_Player)
         {
             Player newPlayer = m_FirstPlayer;
+
             if(i_Player == m_FirstPlayer)
             {
                 newPlayer = m_SecondPlayer;
