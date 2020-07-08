@@ -75,6 +75,7 @@ namespace MemoryGame.UI
                     cardsBoard[i, j].BackColor = Color.DarkGray;
                     cardsBoard[i, j].Click += gameCard_Click;
                     cardsBoard[i, j].Text = m_Board.BoardCells[i, j].ToString();
+                    m_Board.BoardCells[i, j].CellChangedRevealedState += updateButtonsText;
                     this.Controls.Add(cardsBoard[i, j]);
                 }
             }
@@ -136,7 +137,6 @@ namespace MemoryGame.UI
             {
                 m_SecondCellChosen = findChosenGameCell(sender as Button);
                 (sender as Button).Enabled = false;
-
                 m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
                 m_CurrentPlayerColor = m_CurrentPlayer == m_FirstPlayer ? m_FirstPlayerColor : m_SecondPlayerColor;
                 if (m_FirstCellChosen.Letter != m_SecondCellChosen.Letter)
@@ -145,7 +145,7 @@ namespace MemoryGame.UI
                     currentPlayer.BackColor = m_CurrentPlayerColor;
                 }
 
-                updateButtonsText();
+                ////updateButtonsText();
                 updateLabels();
                 if(m_GameManager.IsGameOver())
                 {
@@ -159,9 +159,27 @@ namespace MemoryGame.UI
                         this.Close();
                     }
                 }
+
+                if(m_CurrentPlayer.Type == ePlayerType.Computer)
+                {
+                    computerMove();
+                }
             }
 
             m_IsFirstClick = !m_IsFirstClick;
+        }
+
+        private void computerMove()
+        {
+            m_FirstCellChosen = m_CurrentPlayer.PlayerMove(m_Board);
+            ////updateButtonsText();
+            m_SecondCellChosen = m_CurrentPlayer.ComputerAiMove(m_Board, m_FirstCellChosen);
+            //updateButtonsText();
+            m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
+            m_CurrentPlayerColor = m_FirstPlayerColor;
+
+            //updateButtonsText();
+            updateLabels();
         }
 
         private string gameOverMessage()

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace MemoryGame.Logic
 {
@@ -6,6 +7,7 @@ namespace MemoryGame.Logic
     {
         private readonly char r_Letter;
         private bool m_IsRevealed;
+        public event Action CellChangedRevealedState;
 
         public GameCell(char i_Letter)
         {
@@ -31,6 +33,7 @@ namespace MemoryGame.Logic
             set
             {
                 m_IsRevealed = value;
+                OnChangedRevealedState();
             }
         }
 
@@ -50,6 +53,14 @@ namespace MemoryGame.Logic
             cellSB.Append(" ");
 
             return cellSB.ToString();
+        }
+
+        protected virtual void OnChangedRevealedState()
+        {
+            if(CellChangedRevealedState != null)
+            {
+                CellChangedRevealedState.Invoke();
+            }
         }
     }
 }
