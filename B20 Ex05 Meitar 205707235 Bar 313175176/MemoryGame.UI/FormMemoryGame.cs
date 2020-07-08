@@ -66,7 +66,6 @@ namespace MemoryGame.UI
             for(int i = 0; i < m_Board.Height; i++)
             {
                 int y = this.Location.Y + k_Margin + (i * (k_ButtonSize + k_Margin));
-
                 for(int j = 0; j < m_Board.Width; j++)
                 {
                     int x = this.Location.X + k_Margin + (j * (k_ButtonSize + k_Margin));
@@ -150,7 +149,15 @@ namespace MemoryGame.UI
                 updateLabels();
                 if(m_GameManager.IsGameOver())
                 {
-                    MessageBox.Show(gameOverMessage());
+                    DialogResult playAnotherGame = MessageBox.Show(gameOverMessage(), "Game Over", MessageBoxButtons.YesNo);
+                    if(playAnotherGame == DialogResult.Yes)
+                    {
+                        resetGame();
+                    }
+                    else
+                    {
+                        this.Close();
+                    }
                 }
             }
 
@@ -159,14 +166,24 @@ namespace MemoryGame.UI
 
         private string gameOverMessage()
         {
-            string winner = m_FirstPlayer.Score > m_SecondPlayer.Score ? m_FirstPlayer.Name : m_SecondPlayer.Name;
+            string finalMsg;
+
+            if(m_FirstPlayer.Score == m_SecondPlayer.Score)
+            {
+                finalMsg = "It's a draw, maybe next time we'll have a winner :-(";
+            }
+            else
+            {
+                string winner = m_FirstPlayer.Score > m_SecondPlayer.Score ? m_FirstPlayer.Name : m_SecondPlayer.Name;
+                finalMsg = string.Format("Congratulations {0}!! You are the Winner!!", winner);
+            }
 
             return string.Format(
 @"Final Score:
 {0}
 {1}
-Congratulations {2}!! You are the Winner!!
-Play another game?", firstPlayer.Text, secondPlayer.Text, winner);
+{2}
+Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
         }
 
         private GameCell findChosenGameCell(Button i_SelectedCard)
@@ -208,6 +225,39 @@ Play another game?", firstPlayer.Text, secondPlayer.Text, winner);
             m_FirstChosenButton.Enabled = true;
             i_ButtonToCover.BackColor = Color.DarkGray;
             m_FirstChosenButton.BackColor = Color.DarkGray;
+        }
+
+        private void resetGame()
+        {
+            m_FirstPlayer.Score = 0;
+            m_SecondPlayer.Score = 0;
+            if (m_SecondPlayer.Type == ePlayerType.Computer)
+            {
+                m_SecondPlayer.ResetComputerMemory();
+            }
+            
+            m_Board = new Board(m_Board.Height, m_Board.Width);
+            m_GameManager = new GameManager(m_FirstPlayer, m_SecondPlayer, m_Board);
+            resetButtons();
+            updateLabels();
+            if(m_FirstPlayer.Score > m_CurrentPlayer.Score)
+            {
+                m_CurrentPlayer = m_FirstPlayer;
+                m_CurrentPlayerColor = m_FirstPlayerColor;
+            }
+        }
+
+        private void resetButtons()
+        {
+            for (int i = 0; i < m_Board.Height; i++)
+            {
+                for (int j = 0; j < m_Board.Width; j++)
+                {
+                    m_GameCards[i, j].BackColor = Color.DarkGray;
+                    m_GameCards[i, j].Text = m_Board.BoardCells[i, j].ToString();
+                    m_GameCards[i, j].Enabled = true;
+                }
+            }
         }
 
         //internal void RunGames()
