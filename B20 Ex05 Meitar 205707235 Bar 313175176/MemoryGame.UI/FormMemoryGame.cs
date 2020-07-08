@@ -147,6 +147,7 @@ namespace MemoryGame.UI
                 if(m_GameManager.IsGameOver())
                 {
                     DialogResult playAnotherGame = MessageBox.Show(gameOverMessage(), "Game Over", MessageBoxButtons.YesNo);
+
                     if(playAnotherGame == DialogResult.Yes)
                     {
                         resetGame();
