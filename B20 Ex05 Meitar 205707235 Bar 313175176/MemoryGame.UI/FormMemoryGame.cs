@@ -129,21 +129,18 @@ namespace MemoryGame.UI
         {
             if (m_IsFirstClick)
             {
-                m_FirstCellChosen = findChosenGameCell(sender as Button);
+                m_FirstCellChosen = (m_CurrentPlayer.Type == ePlayerType.Computer) ? m_CurrentPlayer.PlayerMove(m_Board) : m_FirstCellChosen = findChosenGameCell(sender as Button);
                 m_FirstChosenButton = sender as Button;
                 m_FirstChosenButton.Enabled = false;
             }
             else
             {
-                m_SecondCellChosen = findChosenGameCell(sender as Button);
+                m_SecondCellChosen = (m_CurrentPlayer.Type == ePlayerType.Computer) ? m_CurrentPlayer.PlayerMove(m_Board) : findChosenGameCell(sender as Button);
                 (sender as Button).Enabled = false;
                 m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
                 m_CurrentPlayerColor = m_CurrentPlayer == m_FirstPlayer ? m_FirstPlayerColor : m_SecondPlayerColor;
-                if (m_FirstCellChosen.Letter != m_SecondCellChosen.Letter)
-                {
-                    coverButtons(sender as Button);
-                    currentPlayer.BackColor = m_CurrentPlayerColor;
-                }
+
+                chackIfTwoCellAreNotEqual(sender as Button);
 
                 ////updateButtonsText();
                 updateLabels();
@@ -159,14 +156,18 @@ namespace MemoryGame.UI
                         this.Close();
                     }
                 }
-
-                if(m_CurrentPlayer.Type == ePlayerType.Computer)
-                {
-                    computerMove();
-                }
             }
 
             m_IsFirstClick = !m_IsFirstClick;
+        }
+
+        private void chackIfTwoCellAreNotEqual(Button i_Button)
+        {
+            if (m_FirstCellChosen.Letter != m_SecondCellChosen.Letter)
+            {
+                coverButtons(i_Button);
+                currentPlayer.BackColor = m_CurrentPlayerColor;
+            }
         }
 
         private void computerMove()
@@ -177,6 +178,12 @@ namespace MemoryGame.UI
             //updateButtonsText();
             m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
             m_CurrentPlayerColor = m_FirstPlayerColor;
+
+
+            //m_Board.BoardCells[i, j].IsRevealed = true;
+            //i_SelectedCard.Text = m_Board.BoardCells[i, j].ToString();
+            //i_SelectedCard.BackColor = m_CurrentPlayerColor;
+            //chosendCard = m_Board.BoardCells[i, j];
 
             //updateButtonsText();
             updateLabels();
