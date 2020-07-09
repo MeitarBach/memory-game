@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -17,7 +20,7 @@ namespace MemoryGame.UI
     public partial class FormMemoryGame : Form
     {
         private const int k_Margin = 20;
-        private const int k_ButtonSize = 80;
+        private const int k_ButtonSize = 200;
         private const int k_LabelWidth = 500;
         private const int k_LabelHeight = 32;
         private Board m_Board;
@@ -36,17 +39,36 @@ namespace MemoryGame.UI
         private Button m_FirstChosenButton;
         private bool m_IsFirstClick = true;
         private GameManager m_GameManager;
+        private Dictionary<char, Image> m_ImagesDictionary;
+
 
         public FormMemoryGame(FormSettings i_Settings)
         {
             m_Board = createBoard(i_Settings);
             m_GameCards = createCardsBoard();
             createPlayers(i_Settings);
+            setupDictionry();
             m_GameManager = new GameManager(m_FirstPlayer, m_SecondPlayer, m_Board);
             m_CurrentPlayer = m_FirstPlayer;
             m_CurrentPlayerColor = m_FirstPlayerColor;
             createLabels(i_Settings);
             InitializeComponent();
+        }
+
+        private void setupDictionry()
+        {
+            m_ImagesDictionary = new Dictionary<char, Image>();
+            int numOfLettersInBoard = (m_Board.Height * m_Board.Width) / 2;
+
+            for (int i = 0; i < numOfLettersInBoard; i++)
+            {
+                char charToMapImage = (char)('A' + i);
+                WebRequest request = WebRequest.Create("https://picsum.photos/80");
+                WebResponse resonse = request.GetResponse();
+                Stream streamImage = resonse.GetResponseStream();
+                Image image = Bitmap.FromStream(streamImage);
+                m_ImagesDictionary.Add(charToMapImage, image);
+            }
         }
 
 
@@ -75,7 +97,9 @@ namespace MemoryGame.UI
                     cardsBoard[i, j].Location = new Point(x, y);
                     cardsBoard[i, j].BackColor = Color.DarkGray;
                     cardsBoard[i, j].Click += gameCard_Click;
+                    cardsBoard[i, j].EnabledChanged += gameCard_EnabledChanged;
                     cardsBoard[i, j].Text = m_Board.BoardCells[i, j].ToString();
+                    
                     m_Board.BoardCells[i, j].CellChangedRevealedState += gameCell_CellChangedRevealedState;
                     this.Controls.Add(cardsBoard[i, j]);
                 }
@@ -136,28 +160,31 @@ namespace MemoryGame.UI
             if (m_IsFirstClick)
             {
                 m_FirstCellChosen = findChosenGameCell(sender as Button);
-                m_FirstChosenButton = sender as Button;
-                //m_FirstChosenButton.Enabled = false;
+                if(m_FirstCellChosen == null)
+                {
+                    return;
+                }
             }
             else
             {
                 m_SecondCellChosen = findChosenGameCell(sender as Button);
-                //(sender as Button).Enabled = false;
+                if(m_SecondCellChosen == null)
+                {
+                    return;
+                }
                 m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
                 m_CurrentPlayerColor = m_CurrentPlayer == m_FirstPlayer ? m_FirstPlayerColor : m_SecondPlayerColor;
 
-                while (m_CurrentPlayer.Type == ePlayerType.Computer && !m_GameManager.IsGameOver())
-                {
-                    updateLabels();
-                    computerMove();
-                }
+                computerMove();
 
                 if (m_GameManager.IsGameOver())
                 {
+                    updateLabels();
                     DialogResult playAnotherGame = MessageBox.Show(gameOverMessage(), "Game Over", MessageBoxButtons.YesNo);
                     if (playAnotherGame == DialogResult.Yes)
                     {
                         resetGame();
+                        computerMove();
                     }
                     else
                     {
@@ -181,14 +208,16 @@ namespace MemoryGame.UI
 
         private void computerMove()
         {
-            //updateLabels();
-            m_FirstCellChosen = m_CurrentPlayer.PlayerMove(m_Board);
-            Thread.Sleep(1000);
-            m_SecondCellChosen = m_CurrentPlayer.ComputerAiMove(m_Board, m_FirstCellChosen);
-            m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
-            m_CurrentPlayerColor = m_CurrentPlayer == m_FirstPlayer ? m_FirstPlayerColor : m_SecondPlayerColor;
-            updateLabels();
-            Thread.Sleep(2000);
+            while (m_CurrentPlayer.Type == ePlayerType.Computer && !m_GameManager.IsGameOver())
+            {
+                updateLabels();
+                m_FirstCellChosen = m_CurrentPlayer.PlayerMove(m_Board);
+                Thread.Sleep(1000);
+                m_SecondCellChosen = m_CurrentPlayer.ComputerAiMove(m_Board, m_FirstCellChosen);
+                m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
+                m_CurrentPlayerColor = m_CurrentPlayer == m_FirstPlayer ? m_FirstPlayerColor : m_SecondPlayerColor;
+                updateLabels();
+            }
         }
 
         private string gameOverMessage()
@@ -223,10 +252,13 @@ Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
                 {
                     if (i_SelectedCard == m_GameCards[i, j])
                     {
-                        m_Board.BoardCells[i, j].IsRevealed = true;
-                        i_SelectedCard.Text = m_Board.BoardCells[i, j].ToString();
-                        i_SelectedCard.BackColor = m_CurrentPlayerColor;
-                        chosendCard = m_Board.BoardCells[i, j];
+                        if(!m_Board.BoardCells[i, j].IsRevealed)
+                        {
+                            m_Board.BoardCells[i, j].IsRevealed = true;
+                            //i_SelectedCard.Text = m_Board.BoardCells[i, j].ToString();
+                            i_SelectedCard.BackColor = m_CurrentPlayerColor;
+                            chosendCard = m_Board.BoardCells[i, j];
+                        }
                         break;
                     }
                 }
@@ -241,22 +273,33 @@ Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
             {
                 for (int j = 0; j < m_Board.Width; j++)
                 {
-                    m_GameCards[i, j].Text = m_Board.BoardCells[i, j].ToString();
+                    //m_GameCards[i, j].Text = m_Board.BoardCells[i, j].ToString();
                     if(m_Board.BoardCells[i, j].IsRevealed)
                     {
-                        if(m_GameCards[i, j].Enabled)
+                        m_ImagesDictionary.TryGetValue(m_Board.BoardCells[i, j].Letter, out Image image); // ##
+                        m_GameCards[i,j].Image = image; // ##
+                        
+                        if (m_Board.UnRevealedCells.Contains(m_Board.BoardCells[i, j]))
                         {
                             m_GameCards[i, j].BackColor = m_CurrentPlayerColor;
-                            m_GameCards[i, j].Enabled = false;
+                            //m_GameCards[i, j].Enabled = false;
                         }
                     }
                     else
                     {
+                        m_GameCards[i, j].Image = null; // ##
                         m_GameCards[i, j].BackColor = Color.DarkGray;
                         m_GameCards[i, j].Enabled = true;
                     }
                 }
+
+                this.Refresh();
             }
+        }
+
+        private void gameCard_EnabledChanged(object i_Sender, EventArgs i_EventArgs)
+        {
+
         }
 
         //private void coverButtons(Button i_ButtonToCover)
@@ -280,6 +323,7 @@ Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
             m_GameManager = new GameManager(m_FirstPlayer, m_SecondPlayer, m_Board);
             updateLabels();
             resetButtons();
+            setupDictionry();
             if (m_FirstPlayer.Score > m_CurrentPlayer.Score)
             {
                 m_CurrentPlayer = m_FirstPlayer;
@@ -294,8 +338,10 @@ Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
                 for (int j = 0; j < m_Board.Width; j++)
                 {
                     m_GameCards[i, j].BackColor = Color.DarkGray;
-                    m_GameCards[i, j].Text = m_Board.BoardCells[i, j].ToString();
+                    //m_GameCards[i, j].Text = m_Board.BoardCells[i, j].ToString();
+                    m_GameCards[i, j].Image = null;
                     m_GameCards[i, j].Enabled = true;
+                    m_Board.BoardCells[i, j].CellChangedRevealedState += gameCell_CellChangedRevealedState;
                 }
             }
         }

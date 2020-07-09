@@ -25,6 +25,10 @@ namespace MemoryGame.Logic
             {
                 i_CurrentPlayer.Score++;
                 m_Board.RemainingCouples--;
+                if(i_CurrentPlayer.Type == ePlayerType.Computer)
+                {
+                    Thread.Sleep(2000);
+                }
             }
             else
             {
@@ -33,7 +37,7 @@ namespace MemoryGame.Logic
                 nextPlayer = togglePlayer(i_CurrentPlayer);
             }
 
-            if(m_SecondPlayer.Type == ePlayerType.Computer)
+            if (m_SecondPlayer.Type == ePlayerType.Computer)
             {
                 m_SecondPlayer.ComputerRememberCell(i_FirstCell);
                 m_SecondPlayer.ComputerRememberCell(i_SecondCell);
