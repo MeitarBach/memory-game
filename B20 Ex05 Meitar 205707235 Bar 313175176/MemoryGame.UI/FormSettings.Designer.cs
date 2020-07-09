@@ -41,36 +41,40 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(50, 46);
+            this.label1.Location = new System.Drawing.Point(28, 30);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(248, 32);
+            this.label1.Size = new System.Drawing.Size(137, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "First Player Name:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(50, 106);
+            this.label2.Location = new System.Drawing.Point(28, 68);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(290, 32);
+            this.label2.Size = new System.Drawing.Size(161, 20);
             this.label2.TabIndex = 1;
             this.label2.Text = "Second Player Name:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(50, 227);
+            this.label3.Location = new System.Drawing.Point(28, 146);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(162, 32);
+            this.label3.Size = new System.Drawing.Size(91, 20);
             this.label3.TabIndex = 2;
             this.label3.Text = "Board Size:";
             // 
             // oponnentButton
             // 
-            this.oponnentButton.Location = new System.Drawing.Point(721, 88);
+            this.oponnentButton.Location = new System.Drawing.Point(406, 57);
+            this.oponnentButton.Margin = new System.Windows.Forms.Padding(2);
             this.oponnentButton.Name = "oponnentButton";
-            this.oponnentButton.Size = new System.Drawing.Size(297, 73);
-            this.oponnentButton.TabIndex = 3;
+            this.oponnentButton.Size = new System.Drawing.Size(167, 47);
+            this.oponnentButton.TabIndex = 2;
             this.oponnentButton.Text = "Against a Friend";
             this.oponnentButton.UseVisualStyleBackColor = true;
             this.oponnentButton.Click += new System.EventHandler(this.opponentButton_Click);
@@ -78,9 +82,10 @@
             // boardSizeButton
             // 
             this.boardSizeButton.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.boardSizeButton.Location = new System.Drawing.Point(56, 298);
+            this.boardSizeButton.Location = new System.Drawing.Point(32, 192);
+            this.boardSizeButton.Margin = new System.Windows.Forms.Padding(2);
             this.boardSizeButton.Name = "boardSizeButton";
-            this.boardSizeButton.Size = new System.Drawing.Size(244, 155);
+            this.boardSizeButton.Size = new System.Drawing.Size(137, 100);
             this.boardSizeButton.TabIndex = 4;
             this.boardSizeButton.Text = "4x4";
             this.boardSizeButton.UseVisualStyleBackColor = false;
@@ -89,9 +94,10 @@
             // startButton
             // 
             this.startButton.BackColor = System.Drawing.Color.Lime;
-            this.startButton.Location = new System.Drawing.Point(841, 385);
+            this.startButton.Location = new System.Drawing.Point(473, 248);
+            this.startButton.Margin = new System.Windows.Forms.Padding(2);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(177, 68);
+            this.startButton.Size = new System.Drawing.Size(100, 44);
             this.startButton.TabIndex = 5;
             this.startButton.Text = "Start!";
             this.startButton.UseVisualStyleBackColor = false;
@@ -99,25 +105,27 @@
             // 
             // firstPlayerTextBox
             // 
-            this.firstPlayerTextBox.Location = new System.Drawing.Point(370, 46);
+            this.firstPlayerTextBox.Location = new System.Drawing.Point(208, 30);
+            this.firstPlayerTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.firstPlayerTextBox.Name = "firstPlayerTextBox";
-            this.firstPlayerTextBox.Size = new System.Drawing.Size(314, 38);
-            this.firstPlayerTextBox.TabIndex = 6;
+            this.firstPlayerTextBox.Size = new System.Drawing.Size(178, 26);
+            this.firstPlayerTextBox.TabIndex = 1;
             // 
             // secondPlayerTextBox
             // 
             this.secondPlayerTextBox.Enabled = false;
-            this.secondPlayerTextBox.Location = new System.Drawing.Point(370, 106);
+            this.secondPlayerTextBox.Location = new System.Drawing.Point(208, 68);
+            this.secondPlayerTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.secondPlayerTextBox.Name = "secondPlayerTextBox";
-            this.secondPlayerTextBox.Size = new System.Drawing.Size(314, 38);
-            this.secondPlayerTextBox.TabIndex = 7;
+            this.secondPlayerTextBox.Size = new System.Drawing.Size(178, 26);
+            this.secondPlayerTextBox.TabIndex = 3;
             this.secondPlayerTextBox.Text = "- computer -";
             // 
             // FormSettings
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 31F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1030, 465);
+            this.ClientSize = new System.Drawing.Size(579, 300);
             this.Controls.Add(this.secondPlayerTextBox);
             this.Controls.Add(this.firstPlayerTextBox);
             this.Controls.Add(this.startButton);
@@ -126,7 +134,8 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormSettings";

@@ -14,8 +14,6 @@ namespace MemoryGame.UI
         // Form controls constants
         private const int k_Margin = 20;
         private const int k_ButtonSize = 80;
-        private const int k_LabelWidth = 500;
-        private const int k_LabelHeight = 32;
 
         // Form constant colors
         private readonly Color r_FirstPlayerColor = Color.GreenYellow;
@@ -54,6 +52,7 @@ namespace MemoryGame.UI
             m_CurrentPlayer = m_FirstPlayer;
             m_CurrentPlayerColor = r_FirstPlayerColor;
             createLabels(i_Settings);
+            this.CenterToScreen();
             InitializeComponent();
         }
 
@@ -114,28 +113,27 @@ namespace MemoryGame.UI
         private void createLabels(FormSettings i_Settings)
         {
             int labelsX = this.Location.X + k_Margin;
-            Size labelSize = new Size(k_LabelWidth, k_LabelHeight);
 
             currentPlayer = new Label();
             currentPlayer.Text = string.Format("Current Player: {0}", m_CurrentPlayer.Name);
             currentPlayer.BackColor = r_FirstPlayerColor;
-            currentPlayer.Size = labelSize;
             int currentPlayerY = this.Location.Y + k_Margin + (m_Board.Height * (k_Margin + k_ButtonSize));
             currentPlayer.Location = new Point(labelsX, currentPlayerY);
+            currentPlayer.AutoSize = true;
             this.Controls.Add(currentPlayer);
 
             firstPlayer = new Label();
             firstPlayer.Text = string.Format("{0}: {1} Pairs", m_FirstPlayer.Name, m_FirstPlayer.Score);
             firstPlayer.BackColor = r_FirstPlayerColor;
-            firstPlayer.Size = labelSize;
             firstPlayer.Location = new Point(labelsX, currentPlayerY + currentPlayer.Height + k_Margin);
+            firstPlayer.AutoSize = true;
             this.Controls.Add(firstPlayer);
 
             secondPlayer = new Label();
             secondPlayer.Text = string.Format("{0}: {1} Pairs", m_SecondPlayer.Name, m_SecondPlayer.Score);
             secondPlayer.BackColor = r_SecondPlayerColor;
-            secondPlayer.Size = labelSize;
             secondPlayer.Location = new Point(labelsX, firstPlayer.Location.Y + currentPlayer.Height + k_Margin);
+            secondPlayer.AutoSize = true;
             this.Controls.Add(secondPlayer);
         }
 
