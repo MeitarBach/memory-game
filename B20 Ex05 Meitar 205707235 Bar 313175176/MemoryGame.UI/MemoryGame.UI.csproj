@@ -51,6 +51,7 @@
     <Compile Include="FormSettings.Designer.cs">
       <DependentUpon>FormSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="MemoryGame.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -256,7 +256,7 @@ Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
                         {
                             m_Board.BoardCells[i, j].IsRevealed = true;
                             //i_SelectedCard.Text = m_Board.BoardCells[i, j].ToString();
-                            i_SelectedCard.BackColor = m_CurrentPlayerColor;
+                            //i_SelectedCard.BackColor = m_CurrentPlayerColor;
                             chosendCard = m_Board.BoardCells[i, j];
                         }
                         break;
@@ -278,17 +278,25 @@ Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
                     {
                         m_ImagesDictionary.TryGetValue(m_Board.BoardCells[i, j].Letter, out Image image); // ##
                         m_GameCards[i,j].Image = image; // ##
-                        
+                        //m_GameCards[i,j].BackgroundImageLayout = ImageLayout.None; // ##
+
                         if (m_Board.UnRevealedCells.Contains(m_Board.BoardCells[i, j]))
                         {
-                            m_GameCards[i, j].BackColor = m_CurrentPlayerColor;
+                            //m_GameCards[i, j].BackColor = m_CurrentPlayerColor;
+                            //m_GameCards[i, j].Margin = new Padding(5);
+
+                            m_GameCards[i, j].FlatStyle = FlatStyle.Flat;
+                            m_GameCards[i, j].FlatAppearance.BorderColor = m_CurrentPlayerColor;
+                            m_GameCards[i, j].FlatAppearance.BorderSize = 3;
+
                             //m_GameCards[i, j].Enabled = false;
                         }
                     }
                     else
                     {
                         m_GameCards[i, j].Image = null; // ##
-                        m_GameCards[i, j].BackColor = Color.DarkGray;
+                        //m_GameCards[i, j].BackColor = Color.DarkGray;
+                        m_GameCards[i, j].FlatStyle = FlatStyle.Standard;
                         m_GameCards[i, j].Enabled = true;
                     }
                 }
@@ -340,6 +348,7 @@ Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
                     m_GameCards[i, j].BackColor = Color.DarkGray;
                     //m_GameCards[i, j].Text = m_Board.BoardCells[i, j].ToString();
                     m_GameCards[i, j].Image = null;
+                    m_GameCards[i, j].FlatStyle = FlatStyle.Standard;
                     m_GameCards[i, j].Enabled = true;
                     m_Board.BoardCells[i, j].CellChangedRevealedState += gameCell_CellChangedRevealedState;
                 }
