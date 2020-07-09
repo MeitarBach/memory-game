@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using MemoryGame.Logic;
 
 namespace MemoryGame.UI
 {
@@ -27,7 +19,7 @@ namespace MemoryGame.UI
             int.TryParse(boardSizeButton.Text[2].ToString(), out o_Width);
         }
 
-        public bool IsOponnentHuman()
+        public bool IsOpponentHuman()
         {
             return secondPlayerTextBox.Enabled;
         }
@@ -48,12 +40,11 @@ namespace MemoryGame.UI
             }
         }
 
-        private void oponnentButton_Click(object sender, EventArgs e)
+        private void opponentButton_Click(object sender, EventArgs e)
         {
             secondPlayerTextBox.Enabled = !secondPlayerTextBox.Enabled;
             (sender as Button).Text = secondPlayerTextBox.Enabled ? "Against Computer" : "Against a Friend";
             secondPlayerTextBox.Text = secondPlayerTextBox.Enabled ? string.Empty : "- computer -";
-
         }
 
         private void boardSizeButton_Click(object sender, EventArgs e)

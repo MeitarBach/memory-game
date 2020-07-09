@@ -73,7 +73,7 @@
             this.oponnentButton.TabIndex = 3;
             this.oponnentButton.Text = "Against a Friend";
             this.oponnentButton.UseVisualStyleBackColor = true;
-            this.oponnentButton.Click += new System.EventHandler(this.oponnentButton_Click);
+            this.oponnentButton.Click += new System.EventHandler(this.opponentButton_Click);
             // 
             // boardSizeButton
             // 
