@@ -13,7 +13,7 @@ namespace MemoryGame.UI
     {
         // Form controls constants
         private const int k_Margin = 20;
-        private const int k_ButtonSize = 200;
+        private const int k_ButtonSize = 80;
         private const int k_LabelWidth = 500;
         private const int k_LabelHeight = 32;
 
