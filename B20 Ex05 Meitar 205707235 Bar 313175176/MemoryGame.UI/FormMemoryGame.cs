@@ -75,7 +75,7 @@ namespace MemoryGame.UI
                     cardsBoard[i, j].BackColor = Color.DarkGray;
                     cardsBoard[i, j].Click += gameCard_Click;
                     cardsBoard[i, j].Text = m_Board.BoardCells[i, j].ToString();
-                    m_Board.BoardCells[i, j].CellChangedRevealedState += updateButtonsText;
+                    m_Board.BoardCells[i, j].CellChangedRevealedState += gameCell_CellChangedRevealedState;
                     this.Controls.Add(cardsBoard[i, j]);
                 }
             }
@@ -139,18 +139,24 @@ namespace MemoryGame.UI
                 (sender as Button).Enabled = false;
                 m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
                 m_CurrentPlayerColor = m_CurrentPlayer == m_FirstPlayer ? m_FirstPlayerColor : m_SecondPlayerColor;
-                if (m_FirstCellChosen.Letter != m_SecondCellChosen.Letter)
+                //if (m_FirstCellChosen.Letter != m_SecondCellChosen.Letter)
+                //{
+                //    coverButtons(sender as Button);
+                //    currentPlayer.BackColor = m_CurrentPlayerColor;
+                //}
+
+                ////gameCell_CellChangedRevealedState();
+                updateLabels();
+
+                while (m_CurrentPlayer.Type == ePlayerType.Computer && !m_GameManager.IsGameOver())
                 {
-                    coverButtons(sender as Button);
-                    currentPlayer.BackColor = m_CurrentPlayerColor;
+                    computerMove();
                 }
 
-                ////updateButtonsText();
-                updateLabels();
-                if(m_GameManager.IsGameOver())
+                if (m_GameManager.IsGameOver())
                 {
                     DialogResult playAnotherGame = MessageBox.Show(gameOverMessage(), "Game Over", MessageBoxButtons.YesNo);
-                    if(playAnotherGame == DialogResult.Yes)
+                    if (playAnotherGame == DialogResult.Yes)
                     {
                         resetGame();
                     }
@@ -158,11 +164,6 @@ namespace MemoryGame.UI
                     {
                         this.Close();
                     }
-                }
-
-                if(m_CurrentPlayer.Type == ePlayerType.Computer)
-                {
-                    computerMove();
                 }
             }
 
@@ -172,14 +173,12 @@ namespace MemoryGame.UI
         private void computerMove()
         {
             m_FirstCellChosen = m_CurrentPlayer.PlayerMove(m_Board);
-            ////updateButtonsText();
+            Thread.Sleep(1000);
             m_SecondCellChosen = m_CurrentPlayer.ComputerAiMove(m_Board, m_FirstCellChosen);
-            //updateButtonsText();
             m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
-            m_CurrentPlayerColor = m_FirstPlayerColor;
-
-            //updateButtonsText();
+            m_CurrentPlayerColor = m_CurrentPlayer == m_FirstPlayer ? m_FirstPlayerColor : m_SecondPlayerColor;
             updateLabels();
+            Thread.Sleep(2000);
         }
 
         private string gameOverMessage()
@@ -226,13 +225,26 @@ Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
             return chosendCard;
         }
 
-        private void updateButtonsText()
+        private void gameCell_CellChangedRevealedState()
         {
             for (int i = 0; i < m_Board.Height; i++)
             {
                 for (int j = 0; j < m_Board.Width; j++)
                 {
                     m_GameCards[i, j].Text = m_Board.BoardCells[i, j].ToString();
+                    if(m_Board.BoardCells[i, j].IsRevealed)
+                    {
+                        if(m_GameCards[i, j].Enabled)
+                        {
+                            m_GameCards[i, j].BackColor = m_CurrentPlayerColor;
+                            m_GameCards[i, j].Enabled = false;
+                        }
+                    }
+                    else
+                    {
+                        m_GameCards[i, j].BackColor = Color.DarkGray;
+                        m_GameCards[i, j].Enabled = true;
+                    }
                 }
             }
         }
