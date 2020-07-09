@@ -17,6 +17,8 @@ namespace MemoryGame.Logic
 
         public Player ExecuteMove(Player i_CurrentPlayer, GameCell i_FirstCell, GameCell i_SecondCell)
         {
+            m_Board.UnRevealedCells.Remove(i_FirstCell);
+            m_Board.UnRevealedCells.Remove(i_SecondCell);
             Player nextPlayer = i_CurrentPlayer;
 
             if (i_FirstCell.Letter == i_SecondCell.Letter)

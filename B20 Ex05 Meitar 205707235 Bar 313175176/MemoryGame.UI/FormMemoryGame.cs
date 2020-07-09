@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -113,9 +114,14 @@ namespace MemoryGame.UI
 
         private void updateLabels()
         {
+            currentPlayer.BackColor = m_CurrentPlayerColor;
             currentPlayer.Text = string.Format("Current Player: {0}", m_CurrentPlayer.Name);
             firstPlayer.Text = string.Format("{0}: {1} Pairs", m_FirstPlayer.Name, m_FirstPlayer.Score);
             secondPlayer.Text = string.Format("{0}: {1} Pairs", m_SecondPlayer.Name, m_SecondPlayer.Score);
+            //currentPlayer.Refresh();
+            //firstPlayer.Refresh();
+            //secondPlayer.Refresh();
+            this.Refresh();
         }
 
         private void createPlayers(FormSettings i_Settings)
@@ -129,27 +135,20 @@ namespace MemoryGame.UI
         {
             if (m_IsFirstClick)
             {
-                m_FirstCellChosen = (m_CurrentPlayer.Type == ePlayerType.Computer) ? m_CurrentPlayer.PlayerMove(m_Board) : m_FirstCellChosen = findChosenGameCell(sender as Button);
+                m_FirstCellChosen = findChosenGameCell(sender as Button);
                 m_FirstChosenButton = sender as Button;
-                m_FirstChosenButton.Enabled = false;
+                //m_FirstChosenButton.Enabled = false;
             }
             else
             {
-                m_SecondCellChosen = (m_CurrentPlayer.Type == ePlayerType.Computer) ? m_CurrentPlayer.PlayerMove(m_Board) : findChosenGameCell(sender as Button);
-                (sender as Button).Enabled = false;
+                m_SecondCellChosen = findChosenGameCell(sender as Button);
+                //(sender as Button).Enabled = false;
                 m_CurrentPlayer = m_GameManager.ExecuteMove(m_CurrentPlayer, m_FirstCellChosen, m_SecondCellChosen);
                 m_CurrentPlayerColor = m_CurrentPlayer == m_FirstPlayer ? m_FirstPlayerColor : m_SecondPlayerColor;
-                //if (m_FirstCellChosen.Letter != m_SecondCellChosen.Letter)
-                //{
-                //    coverButtons(sender as Button);
-                //    currentPlayer.BackColor = m_CurrentPlayerColor;
-                //}
-
-                ////gameCell_CellChangedRevealedState();
-                updateLabels();
 
                 while (m_CurrentPlayer.Type == ePlayerType.Computer && !m_GameManager.IsGameOver())
                 {
+                    updateLabels();
                     computerMove();
                 }
 
@@ -167,20 +166,22 @@ namespace MemoryGame.UI
                 }
             }
 
+            updateLabels();
             m_IsFirstClick = !m_IsFirstClick;
         }
 
-        private void chackIfTwoCellAreNotEqual(Button i_Button)
-        {
-            if (m_FirstCellChosen.Letter != m_SecondCellChosen.Letter)
-            {
-                coverButtons(i_Button);
-                currentPlayer.BackColor = m_CurrentPlayerColor;
-            }
-        }
+        //private void chackIfTwoCellAreNotEqual(Button i_Button)
+        //{
+        //    if (m_FirstCellChosen.Letter != m_SecondCellChosen.Letter)
+        //    {
+        //        coverButtons(i_Button);
+        //        currentPlayer.BackColor = m_CurrentPlayerColor;
+        //    }
+        //}
 
         private void computerMove()
         {
+            //updateLabels();
             m_FirstCellChosen = m_CurrentPlayer.PlayerMove(m_Board);
             Thread.Sleep(1000);
             m_SecondCellChosen = m_CurrentPlayer.ComputerAiMove(m_Board, m_FirstCellChosen);
@@ -258,13 +259,13 @@ Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
             }
         }
 
-        private void coverButtons(Button i_ButtonToCover)
-        {
-            i_ButtonToCover.Enabled = true;
-            m_FirstChosenButton.Enabled = true;
-            i_ButtonToCover.BackColor = Color.DarkGray;
-            m_FirstChosenButton.BackColor = Color.DarkGray;
-        }
+        //private void coverButtons(Button i_ButtonToCover)
+        //{
+        //    i_ButtonToCover.Enabled = true;
+        //    m_FirstChosenButton.Enabled = true;
+        //    i_ButtonToCover.BackColor = Color.DarkGray;
+        //    m_FirstChosenButton.BackColor = Color.DarkGray;
+        //}
 
         private void resetGame()
         {
@@ -277,9 +278,9 @@ Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
             
             m_Board = new Board(m_Board.Height, m_Board.Width);
             m_GameManager = new GameManager(m_FirstPlayer, m_SecondPlayer, m_Board);
-            resetButtons();
             updateLabels();
-            if(m_FirstPlayer.Score > m_CurrentPlayer.Score)
+            resetButtons();
+            if (m_FirstPlayer.Score > m_CurrentPlayer.Score)
             {
                 m_CurrentPlayer = m_FirstPlayer;
                 m_CurrentPlayerColor = m_FirstPlayerColor;

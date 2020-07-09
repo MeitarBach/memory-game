@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace MemoryGame.UI
 {
@@ -11,6 +12,8 @@ namespace MemoryGame.UI
             //memoryGame.RunGames();
             //MessageDisplayer.DisplayMessage(MessageDisplayer.GoodBye);
             //Thread.Sleep(2500);
+            Application.EnableVisualStyles();
+
             FormSettings settings = new FormSettings();
             settings.ShowDialog();
             FormMemoryGame memoryGame = new FormMemoryGame(settings);
