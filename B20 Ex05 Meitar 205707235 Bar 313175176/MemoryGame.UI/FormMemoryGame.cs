@@ -99,15 +99,25 @@ namespace MemoryGame.UI
             m_LetterToImageMap = new Dictionary<char, Image>();
             int numOfLettersInBoard = (m_Board.Height * m_Board.Width) / 2;
 
-            for (int i = 0; i < numOfLettersInBoard; i++)
+            try
             {
-                char charToMapImage = (char)('A' + i);
-                WebRequest request = WebRequest.Create("https://picsum.photos/80");
-                WebResponse resonse = request.GetResponse();
-                Stream streamImage = resonse.GetResponseStream();
-                Image image = Image.FromStream(streamImage);
-                m_LetterToImageMap.Add(charToMapImage, image);
+                for(int i = 0; i < numOfLettersInBoard; i++)
+                {
+                    char charToMapImage = (char)('A' + i);
+                    WebRequest request = WebRequest.Create("https://picsum.photos/80");
+                    WebResponse resonse = request.GetResponse();
+                    Stream streamImage = resonse.GetResponseStream();
+                    Image image = Image.FromStream(streamImage);
+                    m_LetterToImageMap.Add(charToMapImage, image);
+                }
             }
+            catch(Exception e)
+            {
+                string msg = @"Couldn't get the images online.
+Check your internet connection to enjoy the game visuals!";
+                MessageBox.Show(msg, "Internet connection problem");
+            }
+            
         }
 
         private void createLabels(FormSettings i_Settings)
@@ -172,22 +182,42 @@ namespace MemoryGame.UI
             {
                 for (int j = 0; j < m_Board.Width; j++)
                 {
+                    bool imageAvailable = m_LetterToImageMap.TryGetValue(m_Board.BoardCells[i, j].Letter, out Image image);
                     if (m_Board.BoardCells[i, j].IsRevealed)
                     {
-                        m_LetterToImageMap.TryGetValue(m_Board.BoardCells[i, j].Letter, out Image image);
-                        r_GameCardsButtons[i, j].Image = image;
-                        //// Change Card's border color if it hadn't been discovered yet
-                        if (m_Board.UnRevealedCells.Contains(m_Board.BoardCells[i, j]))
+                        bool cardWasNotDiscovered = m_Board.UnRevealedCells.Contains(m_Board.BoardCells[i, j]);
+                        if (imageAvailable)
                         {
-                            r_GameCardsButtons[i, j].FlatStyle = FlatStyle.Flat;
-                            r_GameCardsButtons[i, j].FlatAppearance.BorderColor = m_CurrentPlayerColor;
-                            r_GameCardsButtons[i, j].FlatAppearance.BorderSize = 3;
+                            r_GameCardsButtons[i, j].Image = image;
+                            //// Change Card's border color if it hadn't been discovered yet
+                            if (cardWasNotDiscovered)
+                            {
+                                r_GameCardsButtons[i, j].FlatStyle = FlatStyle.Flat;
+                                r_GameCardsButtons[i, j].FlatAppearance.BorderColor = m_CurrentPlayerColor;
+                                r_GameCardsButtons[i, j].FlatAppearance.BorderSize = 3;
+                            }
+                        }
+                        else // Offline version - Text instead of pictures
+                        {
+                            r_GameCardsButtons[i, j].Text = m_Board.BoardCells[i, j].ToString();
+                            if (cardWasNotDiscovered)
+                            {
+                                r_GameCardsButtons[i, j].BackColor = m_CurrentPlayerColor;
+                            }
                         }
                     }
                     else // Cover unrevealed cards
                     {
-                        r_GameCardsButtons[i, j].Image = null;
-                        r_GameCardsButtons[i, j].FlatStyle = FlatStyle.Standard;
+                        if(imageAvailable)
+                        {
+                            r_GameCardsButtons[i, j].Image = null;
+                            r_GameCardsButtons[i, j].FlatStyle = FlatStyle.Standard;
+                        }
+                        else // Offline version - Text instead of pictures
+                        {
+                            r_GameCardsButtons[i, j].Text = m_Board.BoardCells[i, j].ToString();
+                            r_GameCardsButtons[i, j].BackColor = r_CoveredButtonColor;
+                        }
                     }
                 }
 
@@ -302,6 +332,8 @@ namespace MemoryGame.UI
                 {
                     r_GameCardsButtons[i, j].Image = null;
                     r_GameCardsButtons[i, j].FlatStyle = FlatStyle.Standard;
+                    r_GameCardsButtons[i, j].BackColor = r_CoveredButtonColor;
+                    r_GameCardsButtons[i, j].Text = m_Board.BoardCells[i, j].ToString();
                     m_Board.BoardCells[i, j].CellChangedRevealedState += gameCell_CellChangedRevealedState;
                 }
             }
@@ -322,10 +354,11 @@ namespace MemoryGame.UI
             }
 
             return string.Format(
-@"Final Score:
-{0}
-{1}
-{2}
+@"Final Score: {0}
+                     {1}
+
+    {2}
+
 Play another game?", firstPlayer.Text, secondPlayer.Text, finalMsg);
         }
     }
