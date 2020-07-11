@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryGame.Logic", "MemoryG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryGame.UI", "MemoryGame.UI\MemoryGame.UI.csproj", "{56479D53-01BD-4CBC-81B8-19B7643E0DFB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9D73CA12-F3DA-42DB-A40B-64A1CBCB3A85}"
+	ProjectSection(SolutionItems) = preProject
+		Ex05 Checking Report.txt = Ex05 Checking Report.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

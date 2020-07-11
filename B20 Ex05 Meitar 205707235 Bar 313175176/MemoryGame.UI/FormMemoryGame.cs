@@ -185,43 +185,54 @@ Check your internet connection to enjoy the game visuals!";
                     bool imageAvailable = m_LetterToImageMap.TryGetValue(m_Board.BoardCells[i, j].Letter, out Image image);
                     if (m_Board.BoardCells[i, j].IsRevealed)
                     {
-                        bool cardWasNotDiscovered = m_Board.UnRevealedCells.Contains(m_Board.BoardCells[i, j]);
-                        if (imageAvailable)
-                        {
-                            r_GameCardsButtons[i, j].Image = image;
-                            //// Change Card's border color if it hadn't been discovered yet
-                            if (cardWasNotDiscovered)
-                            {
-                                r_GameCardsButtons[i, j].FlatStyle = FlatStyle.Flat;
-                                r_GameCardsButtons[i, j].FlatAppearance.BorderColor = m_CurrentPlayerColor;
-                                r_GameCardsButtons[i, j].FlatAppearance.BorderSize = 3;
-                            }
-                        }
-                        else // Offline version - Text instead of pictures
-                        {
-                            r_GameCardsButtons[i, j].Text = m_Board.BoardCells[i, j].ToString();
-                            if (cardWasNotDiscovered)
-                            {
-                                r_GameCardsButtons[i, j].BackColor = m_CurrentPlayerColor;
-                            }
-                        }
+                        revealCard(i, j, imageAvailable, image);
                     }
                     else // Cover unrevealed cards
                     {
-                        if(imageAvailable)
-                        {
-                            r_GameCardsButtons[i, j].Image = null;
-                            r_GameCardsButtons[i, j].FlatStyle = FlatStyle.Standard;
-                        }
-                        else // Offline version - Text instead of pictures
-                        {
-                            r_GameCardsButtons[i, j].Text = m_Board.BoardCells[i, j].ToString();
-                            r_GameCardsButtons[i, j].BackColor = r_CoveredButtonColor;
-                        }
+                        coverCard(i, j, imageAvailable);
                     }
                 }
 
                 this.Refresh(); // Refresh form to see changes
+            }
+        }
+
+        private void revealCard(int i_RowIndex, int i_ColumnIndex, bool i_ImageAvailable, Image i_Image)
+        {
+            bool cardWasNotDiscovered = m_Board.UnRevealedCells.Contains(m_Board.BoardCells[i_RowIndex, i_ColumnIndex]);
+
+            if (i_ImageAvailable)
+            {
+                r_GameCardsButtons[i_RowIndex, i_ColumnIndex].Image = i_Image;
+                //// Change Card's border color if it hadn't been discovered yet
+                if (cardWasNotDiscovered)
+                {
+                    r_GameCardsButtons[i_RowIndex, i_ColumnIndex].FlatStyle = FlatStyle.Flat;
+                    r_GameCardsButtons[i_RowIndex, i_ColumnIndex].FlatAppearance.BorderColor = m_CurrentPlayerColor;
+                    r_GameCardsButtons[i_RowIndex, i_ColumnIndex].FlatAppearance.BorderSize = 3;
+                }
+            }
+            else // Offline version - Text instead of pictures
+            {
+                r_GameCardsButtons[i_RowIndex, i_ColumnIndex].Text = m_Board.BoardCells[i_RowIndex, i_ColumnIndex].ToString();
+                if (cardWasNotDiscovered)
+                {
+                    r_GameCardsButtons[i_RowIndex, i_ColumnIndex].BackColor = m_CurrentPlayerColor;
+                }
+            }
+        }
+
+        private void coverCard(int i_RowIndex, int i_ColumnIndex, bool i_ImageAvailable)
+        {
+            if (i_ImageAvailable)
+            {
+                r_GameCardsButtons[i_RowIndex, i_ColumnIndex].Image = null;
+                r_GameCardsButtons[i_RowIndex, i_ColumnIndex].FlatStyle = FlatStyle.Standard;
+            }
+            else // Offline version - Text instead of pictures
+            {
+                r_GameCardsButtons[i_RowIndex, i_ColumnIndex].Text = m_Board.BoardCells[i_RowIndex, i_ColumnIndex].ToString();
+                r_GameCardsButtons[i_RowIndex, i_ColumnIndex].BackColor = r_CoveredButtonColor;
             }
         }
 
@@ -314,8 +325,8 @@ Check your internet connection to enjoy the game visuals!";
             m_Board = new Board(m_Board.Height, m_Board.Width);
             m_GameManager = new GameManager(m_FirstPlayer, m_SecondPlayer, m_Board);
             updateLabels();
-            resetButtons();
             createDictionary();
+            resetButtons();
             //// Winner starts next game - Last player starts if it's a draw
             if (m_FirstPlayer.Score > m_CurrentPlayer.Score)
             {
@@ -330,10 +341,8 @@ Check your internet connection to enjoy the game visuals!";
             {
                 for (int j = 0; j < m_Board.Width; j++)
                 {
-                    r_GameCardsButtons[i, j].Image = null;
-                    r_GameCardsButtons[i, j].FlatStyle = FlatStyle.Standard;
-                    r_GameCardsButtons[i, j].BackColor = r_CoveredButtonColor;
-                    r_GameCardsButtons[i, j].Text = m_Board.BoardCells[i, j].ToString();
+                    bool imageAvailable = m_LetterToImageMap.TryGetValue(m_Board.BoardCells[i, j].Letter, out Image image);
+                    coverCard(i,j, imageAvailable);
                     m_Board.BoardCells[i, j].CellChangedRevealedState += gameCell_CellChangedRevealedState;
                 }
             }
